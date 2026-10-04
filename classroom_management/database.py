@@ -13,7 +13,7 @@ if os.getenv("VERCEL") or os.getenv("AWS_LAMBDA_FUNCTION_NAME"):  # Kiểm tra x
     temp_db_path = os.path.join(tempfile.gettempdir(), "classroom.db")  # Đặt đường dẫn file CSDL tạm tại thư mục /tmp
     BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     repo_db_path = os.path.join(BASE_DIR, "classroom.db")
-    if not os.path.exists(temp_db_path) and os.path.exists(repo_db_path):
+    if os.path.exists(repo_db_path):
         import shutil
         try:
             shutil.copy2(repo_db_path, temp_db_path)
