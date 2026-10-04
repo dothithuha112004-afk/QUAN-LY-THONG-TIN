@@ -1,0 +1,629 @@
+<!DOCTYPE html> <!-- Khai báo chuẩn định dạng HTML5 -->
+<html lang="vi"> <!-- Thẻ mở HTML, đặt ngôn ngữ giao diện là Tiếng Việt -->
+<head> <!-- Thẻ chứa cấu hình kỹ thuật và tài nguyên của trang web -->
+  <meta charset="UTF-8"> <!-- Cấu hình bảng mã UTF-8 hỗ trợ hiển thị tiếng Việt có dấu -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Co giãn tự động giao diện chuẩn trên mọi thiết bị (Responsive) -->
+  <title>Hệ Thống Quản Lý Lớp Học</title> <!-- Tiêu đề hiển thị trên thẻ tab của trình duyệt -->
+  <meta name="description" content="Hệ thống Quản lý Lớp học 3 tầng phân quyền Giáo viên, Sinh viên và Quản trị viên."> <!-- Đoạn mô tả nội dung website chuẩn SEO -->
+  <meta property="og:site_name" content="Quản Lý Lớp Học"> <!-- Khai báo tên trang web khi chia sẻ liên kết (Open Graph) -->
+  <meta property="og:title" content="Hệ Thống Quản Lý Lớp Học"> <!-- Khai báo tiêu đề hiển thị khi chia sẻ link lên MXH -->
+  <meta property="og:description" content="Hệ thống Quản lý Lớp học 3 tầng phân quyền Giáo viên, Sinh viên và Quản trị viên."> <!-- Mô tả hiển thị khi chia sẻ link lên MXH -->
+  <meta property="og:type" content="website"> <!-- Khai báo kiểu trang web khi chia sẻ lên MXH -->
+  <link rel="preconnect" href="https://fonts.googleapis.com"> <!-- Tối ưu tốc độ bằng cách kết nối sớm tới Google Fonts -->
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin> <!-- Tải trước phông chữ tĩnh từ Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"> <!-- Tải các phông chữ (Playfair Display, Plus Jakarta Sans, Inter) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"> <!-- Thư viện biểu tượng FontAwesome 6 (dùng cho icon) -->
+  <link rel="stylesheet" href="/static/css/style.css"> <!-- Tệp CSS giao diện tùy chỉnh của ứng dụng -->
+</head> <!-- Đóng phần cấu hình head -->
+<body> <!-- Phần thân hiển thị nội dung giao diện ứng dụng -->
+
+  <div id="app"> <!-- Khung bao bọc toàn bộ ứng dụng Single Page Application (SPA) -->
+
+    <!-- Sidebar Navigation --> <!-- Chú thích: Thanh điều hướng bên trái -->
+    <aside class="sidebar" id="sidebar" style="display: none;"> <!-- Thanh menu bên trái, mặc định ẩn (display: none) khi chưa đăng nhập -->
+      <div class="brand"> <!-- Khối chứa logo và tên ứng dụng -->
+        <div class="brand-icon"> <!-- Khối chứa biểu tượng logo -->
+          <i class="fa-solid fa-graduation-cap"></i> <!-- Biểu tượng chiếc mũ cử nhân -->
+        </div> <!-- Đóng khối biểu tượng logo -->
+        <div class="brand-text"> <!-- Khối chứa tên thương hiệu -->
+          <h2>Quản Lý Lớp Học</h2> <!-- Tiêu đề hệ thống "Quản Lý Lớp Học" -->
+          <span>Phân Quyền 3 Tầng</span> <!-- Phụ đề mô hình "Phân Quyền 3 Tầng" -->
+        </div> <!-- Đóng khối chứa tên thương hiệu -->
+      </div> <!-- Đóng khối logo và thương hiệu -->
+
+      <ul class="nav-menu" id="nav-menu"></ul> <!-- Danh sách menu (sẽ được Javascript nạp động tùy theo quyền đăng nhập) -->
+
+      <div class="user-widget"> <!-- Khung thông tin người dùng ở góc dưới thanh menu sidebar -->
+        <div class="avatar-circle" id="user-avatar-text">U</div> <!-- Hình tròn hiển thị chữ cái đầu tên người dùng (Avatar) -->
+        <div class="user-info">
+          <div class="name" id="user-display-name">Loading...</div>
+          <span class="badge-role" id="user-role-badge">Role</span>
+        </div>
+        <button onclick="app.logout()" title="Đăng xuất" style="background:none; border:none; color:var(--text-muted); cursor:pointer;">
+          <i class="fa-solid fa-right-from-bracket"></i>
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+
+      <div class="top-bar">
+        <div class="page-title">
+          <h1 id="page-heading">Trang Chủ</h1>
+          <p id="page-subheading">Hệ thống quản lý thông tin đào tạo và lớp học</p>
+        </div>
+      </div>
+
+      <!-- LOGIN CONTAINER -->
+      <div id="login-container" style="max-width: 420px; margin: 60px auto;" class="glass-panel">
+        <div style="padding: 32px;">
+          <div style="text-align: center; margin-bottom: 24px;">
+            <div class="brand-icon" style="margin: 0 auto 16px auto; width: 56px; height: 56px; font-size: 28px;">
+              <i class="fa-solid fa-graduation-cap"></i>
+            </div>
+            <h2 style="font-size: 22px;">Đăng Nhập Hệ Thống</h2>
+            <p style="color: var(--text-muted); font-size: 13px; margin-top: 6px;">Vui lòng nhập tài khoản và mật khẩu của bạn</p>
+          </div>
+
+          <form onsubmit="app.handleLogin(event)">
+            <div class="form-group">
+              <label><i class="fa-solid fa-user"></i> Tên đăng nhập</label>
+              <input type="text" id="login-username" class="form-control" placeholder="Nhập tên đăng nhập của bạn" required>
+            </div>
+            <div class="form-group">
+              <label><i class="fa-solid fa-lock"></i> Mật khẩu</label>
+              <input type="password" id="login-password" class="form-control" placeholder="Nhập mật khẩu" required>
+            </div>
+            <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center; margin-top: 12px;">
+              <i class="fa-solid fa-right-to-bracket"></i> Đăng Nhập
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <!-- MAIN DASHBOARD CONTENT SECTIONS -->
+      <div id="dashboard-container" style="display: none;">
+
+        <div id="sec-dashboard" class="content-sec">
+          <div class="stats-grid" id="admin-stats-grid" style="display:none;">
+            <div class="glass-panel stat-card">
+              <div class="stat-icon blue"><i class="fa-solid fa-chalkboard-user"></i></div>
+              <div class="stat-info">
+                <h3 id="stat-teachers">0</h3>
+                <p>Giáo Viên</p>
+              </div>
+            </div>
+            <div class="glass-panel stat-card">
+              <div class="stat-icon green"><i class="fa-solid fa-user-graduate"></i></div>
+              <div class="stat-info">
+                <h3 id="stat-students">0</h3>
+                <p>Học Sinh / Sinh Viên</p>
+              </div>
+            </div>
+            <div class="glass-panel stat-card">
+              <div class="stat-icon purple"><i class="fa-solid fa-book-open"></i></div>
+              <div class="stat-info">
+                <h3 id="stat-courses">0</h3>
+                <p>Môn Học Trực Tuyến</p>
+              </div>
+            </div>
+            <div class="glass-panel stat-card">
+              <div class="stat-icon amber"><i class="fa-solid fa-calendar-days"></i></div>
+              <div class="stat-info">
+                <h3 id="stat-schedules">0</h3>
+                <p>Lớp / Buổi Học</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="glass-panel" style="padding: 28px; margin-bottom: 24px; background: linear-gradient(135deg, #e0e7ff, #f5f3ff); border: 1px solid #c7d2fe;">
+            <h2 id="welcome-title" style="color: #3730a3;">Xin chào!</h2>
+            <p id="welcome-sub" style="color: #4338ca; margin-top: 8px; font-weight: 500;">
+              Chào mừng bạn đến với Hệ thống Quản lý Lớp học. Bạn có thể duyệt các tính năng theo phân quyền từ thanh điều hướng bên trái.
+            </p>
+          </div>
+        </div>
+
+        <!-- PERSONAL PROFILE SECTION -->
+        <div id="sec-profile" class="content-sec" style="display: none;">
+          <div class="glass-panel" style="padding: 28px; max-width: 700px;">
+            <div style="display: flex; align-items: center; gap: 20px; margin-bottom: 24px;">
+              <div class="avatar-circle" id="profile-big-avatar" style="width: 72px; height: 72px; font-size: 28px;">U</div>
+              <div>
+                <h2 id="profile-name-text">Họ và Tên</h2>
+                <span id="profile-role-text" class="badge-role badge-teacher">Role</span>
+              </div>
+            </div>
+
+            <form onsubmit="app.saveProfile(event)">
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                <div class="form-group">
+                  <label><i class="fa-solid fa-id-card"></i> Họ và Tên</label>
+                  <input type="text" id="prof-fullname" class="form-control" required>
+                </div>
+                <div class="form-group">
+                  <label><i class="fa-solid fa-briefcase"></i> Chức vị / Niên khóa</label>
+                  <input type="text" id="prof-title" class="form-control" placeholder="Ví dụ: Giảng viên chính, SV K65">
+                </div>
+                <div class="form-group">
+                  <label><i class="fa-solid fa-cake-candles"></i> Tuổi</label>
+                  <input type="number" id="prof-age" class="form-control" placeholder="Ví dụ: 35">
+                </div>
+                <div class="form-group">
+                  <label><i class="fa-solid fa-building-columns"></i> Bộ môn / Khoa</label>
+                  <input type="text" id="prof-department" class="form-control" placeholder="Ví dụ: Công nghệ thông tin">
+                </div>
+                <div class="form-group">
+                  <label><i class="fa-solid fa-envelope"></i> Email</label>
+                  <input type="email" id="prof-email" class="form-control">
+                </div>
+                <div class="form-group">
+                  <label><i class="fa-solid fa-phone"></i> Số điện thoại</label>
+                  <input type="text" id="prof-phone" class="form-control">
+                </div>
+              </div>
+              <button type="submit" class="btn btn-primary" style="margin-top: 16px;">
+                <i class="fa-solid fa-floppy-disk"></i> Cập Nhật Hồ Sơ Cá Nhân
+              </button>
+            </form>
+          </div>
+
+          <div class="glass-panel" style="padding: 28px; max-width: 700px; margin-top: 24px;">
+            <h3 style="margin-bottom: 16px; font-size: 18px; color: var(--text-dark); display: flex; align-items: center; gap: 8px;">
+              <i class="fa-solid fa-key" style="color: var(--primary-color);"></i> Đổi Mật Khẩu
+            </h3>
+            <form onsubmit="app.changePassword(event)">
+              <div style="display: grid; grid-template-columns: 1fr; gap: 16px; max-width: 400px;">
+                <div class="form-group">
+                  <label><i class="fa-solid fa-lock"></i> Mật khẩu hiện tại</label>
+                  <input type="password" id="change-old-password" class="form-control" placeholder="Nhập mật khẩu hiện tại" required>
+                </div>
+                <div class="form-group">
+                  <label><i class="fa-solid fa-key"></i> Mật khẩu mới</label>
+                  <input type="password" id="change-new-password" class="form-control" placeholder="Tối thiểu 6 ký tự" required minlength="6">
+                </div>
+                <div class="form-group">
+                  <label><i class="fa-solid fa-shield-halved"></i> Xác nhận mật khẩu mới</label>
+                  <input type="password" id="change-confirm-password" class="form-control" placeholder="Nhập lại mật khẩu mới" required>
+                </div>
+              </div>
+              <button type="submit" class="btn btn-primary" style="margin-top: 16px;">
+                <i class="fa-solid fa-rotate"></i> Cập Nhật Mật Khẩu
+              </button>
+            </form>
+          </div>
+        </div>
+
+        <!-- TEACHER/ADMIN: STUDENT ROSTER -->
+        <div id="sec-students-list" class="content-sec" style="display: none;">
+          <div class="glass-panel" style="padding: 24px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+              <h2><i class="fa-solid fa-users"></i> Hồ Sơ Học Sinh / Sinh Viên</h2>
+              <div style="display: flex; gap: 10px;">
+                <input type="text" id="search-student-input" class="form-control" placeholder="Tìm tên hoặc mã SV..." onkeyup="app.loadStudentList()" style="width: 240px;">
+              </div>
+            </div>
+
+            <div class="table-container">
+              <table class="custom-table">
+                <thead>
+                  <tr>
+                    <th>Mã SV</th>
+                    <th>Họ và Tên</th>
+                    <th>Chức vị / Lớp</th>
+                    <th>Bộ môn / Khoa</th>
+                    <th>Email</th>
+                    <th>Số điện thoại</th>
+                    <th>Tuổi</th>
+                  </tr>
+                </thead>
+                <tbody id="student-table-body"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- TEACHING & STUDY SCHEDULE -->
+        <div id="sec-schedule" class="content-sec" style="display: none;">
+          <div class="glass-panel" style="padding: 24px; margin-bottom: 24px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+              <h2 id="schedule-sec-title"><i class="fa-solid fa-calendar-days"></i> Lịch Dạy / Lịch Học</h2>
+              <div style="display: flex; gap: 12px; align-items: center;">
+                <label style="font-size: 13px; color: var(--text-muted);">Lọc theo Tuần:</label>
+                <select id="filter-week-select" class="form-control" onchange="app.loadScheduleView()" style="width: 120px;">
+                  <option value="">Tất cả tuần</option>
+                  <option value="1" selected>Tuần 1</option>
+                  <option value="2">Tuần 2</option>
+                  <option value="3">Tuần 3</option>
+                  <option value="4">Tuần 4</option>
+                </select>
+
+                <label style="font-size: 13px; color: var(--text-muted); margin-left: 10px;">Lọc theo Tháng:</label>
+                <select id="filter-month-select" class="form-control" onchange="app.loadScheduleView()" style="width: 130px;">
+                  <option value="">Tất cả tháng</option>
+                  <option value="9" selected>Tháng 9</option>
+                  <option value="10">Tháng 10</option>
+                  <option value="11">Tháng 11</option>
+                </select>
+              </div>
+            </div>
+
+            <div id="schedule-cards-container" class="schedule-grid"></div>
+          </div>
+        </div>
+
+        <!-- ATTENDANCE -->
+        <div id="sec-attendance" class="content-sec" style="display: none;">
+          <div class="glass-panel" style="padding: 24px;">
+            <h2><i class="fa-solid fa-clipboard-user"></i> Điểm Danh Học Sinh Theo Buổi Học</h2>
+            <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 20px;">
+              Chọn lịch dạy và ngày điểm danh để cập nhật trạng thái có mặt / vắng mặt / đi muộn của từng học sinh.
+            </p>
+
+            <div style="display: flex; gap: 16px; margin-bottom: 20px;">
+              <div class="form-group" style="flex:1;">
+                <label>Lịch Dạy / Lớp Học</label>
+                <select id="att-schedule-select" class="form-control" onchange="app.loadStudentsForAttendance()">
+                  <option value="">-- Chọn lịch dạy --</option>
+                </select>
+              </div>
+              <div class="form-group" style="width: 200px;">
+                <label>Ngày Điểm Danh</label>
+                <input type="date" id="att-date-input" class="form-control" value="2026-09-28">
+              </div>
+            </div>
+
+            <div class="table-container">
+              <table class="custom-table">
+                <thead>
+                  <tr>
+                    <th>Mã SV</th>
+                    <th>Họ và Tên</th>
+                    <th>Trạng Thái Điểm Danh</th>
+                    <th>Ghi Chú (Lý do)</th>
+                  </tr>
+                </thead>
+                <tbody id="attendance-table-body"></tbody>
+              </table>
+            </div>
+
+            <button onclick="app.submitAttendance()" class="btn btn-primary" style="margin-top: 20px;">
+              <i class="fa-solid fa-check-double"></i> Lưu Kết Quả Điểm Danh
+            </button>
+          </div>
+        </div>
+
+        <!-- TEACHER GRADING -->
+        <div id="sec-grading" class="content-sec" style="display: none;">
+          <div class="glass-panel" style="padding: 24px;">
+            <h2><i class="fa-solid fa-file-pen"></i> Cho Điểm Sinh Viên Theo Môn Học</h2>
+            <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 20px;">
+              Nhập và sửa điểm giữa kỳ, điểm cuối kỳ cho sinh viên học môn của bạn. Hệ thống tự động tính điểm tổng kết.
+            </p>
+
+            <div class="form-group" style="max-width: 320px; margin-bottom: 20px;">
+              <label>Môn Học Giảng Dạy</label>
+              <select id="grading-course-select" class="form-control" onchange="app.loadGradesForCourse()">
+                <option value="">-- Chọn môn học --</option>
+              </select>
+            </div>
+
+            <div class="table-container">
+              <table class="custom-table">
+                <thead>
+                  <tr>
+                    <th>Mã SV</th>
+                    <th>Họ và Tên Sinh Viên</th>
+                    <th>Điểm Giữa Kỳ (40%)</th>
+                    <th>Điểm Cuối Kỳ (60%)</th>
+                    <th>Điểm Tổng Kết</th>
+                    <th>Ghi Chú</th>
+                    <th>Thao Tác</th>
+                  </tr>
+                </thead>
+                <tbody id="grading-table-body"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- STUDENT REGISTRATION -->
+        <div id="sec-registration" class="content-sec" style="display: none;">
+          <div class="glass-panel" style="padding: 24px;">
+            <h2><i class="fa-solid fa-folder-plus"></i> Đăng Ký Môn Học Trong Kỳ</h2>
+            <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 20px;">
+              Danh sách môn học mở trong Học kỳ 1 - 2026. Chọn môn học bạn muốn đăng ký.
+            </p>
+
+            <div class="table-container">
+              <table class="custom-table">
+                <thead>
+                  <tr>
+                    <th>Mã Môn</th>
+                    <th>Tên Môn Học</th>
+                    <th>Số Tín Chỉ</th>
+                    <th>Bộ Môn</th>
+                    <th>Mô Tả</th>
+                    <th>Trạng Thái</th>
+                  </tr>
+                </thead>
+                <tbody id="registration-table-body"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- STUDENT GRADES VIEW -->
+        <div id="sec-my-grades" class="content-sec" style="display: none;">
+          <div class="glass-panel" style="padding: 24px;">
+            <h2><i class="fa-solid fa-award"></i> Bảng Điểm Cá Nhân</h2>
+            <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 20px;">Kết quả học tập các môn học đã đăng ký trong kỳ.</p>
+
+            <div class="table-container">
+              <table class="custom-table">
+                <thead>
+                  <tr>
+                    <th>Mã Môn</th>
+                    <th>Tên Môn Học</th>
+                    <th>Số Tín Chỉ</th>
+                    <th>Điểm Giữa Kỳ</th>
+                    <th>Điểm Cuối Kỳ</th>
+                    <th>Điểm Tổng Kết</th>
+                    <th>Ghi Chú Của Giáo Viên</th>
+                  </tr>
+                </thead>
+                <tbody id="my-grades-table-body"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- STUDENT TUITION SECTION (HỌC PHÍ SINH VIÊN) -->
+        <div id="sec-tuition" class="content-sec" style="display: none;">
+          <div class="glass-panel" style="padding: 24px; margin-bottom: 24px;">
+            <h2><i class="fa-solid fa-wallet"></i> Tra Cứu Học Phí Cá Nhân</h2>
+            <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 20px;">Thông tin học phí chi tiết các môn học đã đăng ký trong Học kỳ 1 - 2026.</p>
+
+            <div class="stats-grid" style="margin-bottom: 24px;">
+              <div class="glass-panel stat-card">
+                <div class="stat-icon blue"><i class="fa-solid fa-book-bookmark"></i></div>
+                <div class="stat-info">
+                  <h3 id="tuition-total-credits">0</h3>
+                  <p>Tổng Số Tín Chỉ</p>
+                </div>
+              </div>
+              <div class="glass-panel stat-card">
+                <div class="stat-icon green"><i class="fa-solid fa-money-bill-wave"></i></div>
+                <div class="stat-info">
+                  <h3 id="tuition-total-fee" style="font-size: 20px; color: #34d399;">0 VNĐ</h3>
+                  <p>Tổng Học Phí Kỳ Này</p>
+                </div>
+              </div>
+              <div class="glass-panel stat-card">
+                <div class="stat-icon amber"><i class="fa-solid fa-receipt"></i></div>
+                <div class="stat-info">
+                  <h3 id="tuition-payment-status" style="font-size: 18px;">Chờ thanh toán</h3>
+                  <p>Trạng Thái Nộp Học Phí</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="table-container">
+              <table class="custom-table">
+                <thead>
+                  <tr>
+                    <th>Mã Môn</th>
+                    <th>Tên Môn Học</th>
+                    <th>Số Tín Chỉ</th>
+                    <th>Đơn Giá / Tín Chỉ</th>
+                    <th>Thành Tiền (VNĐ)</th>
+                    <th>Học Kỳ</th>
+                  </tr>
+                </thead>
+                <tbody id="tuition-table-body">
+                  <!-- Tuition items rendered via JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- ADMIN USER & PERMISSION MANAGEMENT -->
+        <div id="sec-admin-users" class="content-sec" style="display: none;">
+          <div class="glass-panel" style="padding: 24px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+              <h2><i class="fa-solid fa-user-shield"></i> Tạo & Phân Quyền Tài Khoản</h2>
+              <button onclick="app.showCreateUserModal()" class="btn btn-primary">
+                <i class="fa-solid fa-user-plus"></i> Tạo Tài Khoản Mới
+              </button>
+            </div>
+
+            <div class="table-container">
+              <table class="custom-table">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Username</th>
+                    <th>Họ và Tên</th>
+                    <th>Quyền (Role)</th>
+                    <th>Mã số</th>
+                    <th>Bộ môn / Khoa</th>
+                    <th>Thao Tác Phân Quyền</th>
+                  </tr>
+                </thead>
+                <tbody id="admin-users-table-body"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- ADMIN COURSE & SCHEDULE MANAGEMENT -->
+        <div id="sec-admin-courses" class="content-sec" style="display: none;">
+          <div class="glass-panel" style="padding: 24px; margin-bottom: 24px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+              <h2><i class="fa-solid fa-book"></i> Quản Lý Môn Học & Xếp Lịch Dạy</h2>
+              <div style="display: flex; gap: 10px;">
+                <button onclick="app.showCreateCourseModal()" class="btn btn-primary">
+                  <i class="fa-solid fa-plus"></i> Thêm Môn Học
+                </button>
+                <button onclick="app.showCreateScheduleModal()" class="btn btn-secondary">
+                  <i class="fa-solid fa-calendar-plus"></i> Xếp Lịch Dạy
+                </button>
+              </div>
+            </div>
+
+            <div class="table-container">
+              <table class="custom-table">
+                <thead>
+                  <tr>
+                    <th>Mã Môn</th>
+                    <th>Tên Môn Học</th>
+                    <th>Số Tín Chỉ</th>
+                    <th>Bộ Môn</th>
+                    <th>Học Kỳ</th>
+                  </tr>
+                </thead>
+                <tbody id="admin-courses-table-body"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </main>
+  </div>
+
+  <!-- MODAL: CREATE USER & ASSIGN ROLE -->
+  <div class="modal-overlay" id="modal-create-user">
+    <div class="glass-panel modal-content">
+      <div class="modal-header">
+        <h3><i class="fa-solid fa-user-plus"></i> Tạo & Phân Quyền Tài Khoản</h3>
+        <button onclick="app.closeModal('modal-create-user')" style="background:none; border:none; color:#fff; cursor:pointer; font-size:18px;">&times;</button>
+      </div>
+      <form onsubmit="app.handleCreateUser(event)">
+        <div class="form-group">
+          <label>Tên đăng nhập (Username)</label>
+          <input type="text" id="new-u-username" class="form-control" required placeholder="Ví dụ: giaovien3, hocsinh4">
+        </div>
+        <div class="form-group">
+          <label>Mật khẩu</label>
+          <input type="password" id="new-u-password" class="form-control" required value="password123">
+        </div>
+        <div class="form-group">
+          <label>Phân Quyền (Role)</label>
+          <select id="new-u-role" class="form-control">
+            <option value="student">Học Sinh / Sinh Viên (Student)</option>
+            <option value="teacher">Giáo Viên (Teacher)</option>
+            <option value="admin">Quản Trị Viên (Admin)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Họ và Tên đầy đủ</label>
+          <input type="text" id="new-u-fullname" class="form-control" required placeholder="Ví dụ: Nguyễn Văn A">
+        </div>
+        <div class="form-group">
+          <label>Mã Giáo viên / Mã Sinh viên</label>
+          <input type="text" id="new-u-code" class="form-control" placeholder="Ví dụ: GV003 hoặc SV004">
+        </div>
+        <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
+          <button type="button" onclick="app.closeModal('modal-create-user')" class="btn btn-secondary">Hủy</button>
+          <button type="submit" class="btn btn-primary">Tạo Tài Khoản</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: CREATE COURSE -->
+  <div class="modal-overlay" id="modal-create-course">
+    <div class="glass-panel modal-content">
+      <div class="modal-header">
+        <h3><i class="fa-solid fa-book"></i> Thêm Môn Học Mới</h3>
+        <button onclick="app.closeModal('modal-create-course')" style="background:none; border:none; color:#fff; cursor:pointer; font-size:18px;">&times;</button>
+      </div>
+      <form onsubmit="app.handleCreateCourse(event)">
+        <div class="form-group">
+          <label>Mã Môn Học</label>
+          <input type="text" id="c-code" class="form-control" required placeholder="Ví dụ: INT3001">
+        </div>
+        <div class="form-group">
+          <label>Tên Môn Học</label>
+          <input type="text" id="c-name" class="form-control" required placeholder="Ví dụ: Lập trình Web FastAPI">
+        </div>
+        <div class="form-group">
+          <label>Số Tín Chỉ</label>
+          <input type="number" id="c-credits" class="form-control" value="3" required>
+        </div>
+        <div class="form-group">
+          <label>Bộ Môn / Khoa</label>
+          <input type="text" id="c-dept" class="form-control" placeholder="Ví dụ: Công nghệ thông tin">
+        </div>
+        <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
+          <button type="button" onclick="app.closeModal('modal-create-course')" class="btn btn-secondary">Hủy</button>
+          <button type="submit" class="btn btn-primary">Tạo Môn Học</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: CREATE SCHEDULE -->
+  <div class="modal-overlay" id="modal-create-schedule">
+    <div class="glass-panel modal-content">
+      <div class="modal-header">
+        <h3><i class="fa-solid fa-calendar-plus"></i> Xếp Lịch Dạy Cho Giáo Viên</h3>
+        <button onclick="app.closeModal('modal-create-schedule')" style="background:none; border:none; color:#fff; cursor:pointer; font-size:18px;">&times;</button>
+      </div>
+      <form onsubmit="app.handleCreateSchedule(event)">
+        <div class="form-group">
+          <label>Chọn Môn Học</label>
+          <select id="sch-course-select" class="form-control" required></select>
+        </div>
+        <div class="form-group">
+          <label>Chọn Giáo Viên Giảng Dạy</label>
+          <select id="sch-teacher-select" class="form-control" required></select>
+        </div>
+        <div class="form-group">
+          <label>Phòng Học</label>
+          <input type="text" id="sch-room" class="form-control" required placeholder="Ví dụ: Phòng 301 - A2">
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+          <div class="form-group">
+            <label>Thứ Trong Tuần</label>
+            <select id="sch-day" class="form-control">
+              <option value="Thứ Hai">Thứ Hai</option>
+              <option value="Thứ Ba">Thứ Ba</option>
+              <option value="Thứ Tư">Thứ Tư</option>
+              <option value="Thứ Năm">Thứ Năm</option>
+              <option value="Thứ Sáu">Thứ Sáu</option>
+              <option value="Thứ Bảy">Thứ Bảy</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Tuần Học</label>
+            <input type="number" id="sch-week" class="form-control" value="1">
+          </div>
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+          <div class="form-group">
+            <label>Giờ Bắt Đầu</label>
+            <input type="text" id="sch-start" class="form-control" value="07:30">
+          </div>
+          <div class="form-group">
+            <label>Giờ Kết Thúc</label>
+            <input type="text" id="sch-end" class="form-control" value="10:30">
+          </div>
+        </div>
+        <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
+          <button type="button" onclick="app.closeModal('modal-create-schedule')" class="btn btn-secondary">Hủy</button>
+          <button type="submit" class="btn btn-primary">Lưu Lịch Dạy</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="toast-container"></div>
+
+  <script src="/static/js/app.js"></script>
+</body>
+</html>
