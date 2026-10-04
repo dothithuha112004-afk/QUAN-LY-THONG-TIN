@@ -6,7 +6,7 @@ __pycache__/
 .Python
 
 # Database & Environment
-classroom.db
+# classroom.db
 classroom.db-shm
 classroom.db-wal
 .env

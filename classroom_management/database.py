@@ -11,6 +11,14 @@ DATABASE_URL = os.getenv("DATABASE_URL")  # Đọc chuỗi kết nối CSDL Clou
 # Xử lý môi trường Vercel/Serverless: Thư mục hiện tại chỉ đọc (read-only), phải lưu file sqlite vào thư mục tạm /tmp
 if os.getenv("VERCEL") or os.getenv("AWS_LAMBDA_FUNCTION_NAME"):  # Kiểm tra xem app có đang chạy trên đám mây Vercel/Lambda không
     temp_db_path = os.path.join(tempfile.gettempdir(), "classroom.db")  # Đặt đường dẫn file CSDL tạm tại thư mục /tmp
+    BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    repo_db_path = os.path.join(BASE_DIR, "classroom.db")
+    if not os.path.exists(temp_db_path) and os.path.exists(repo_db_path):
+        import shutil
+        try:
+            shutil.copy2(repo_db_path, temp_db_path)
+        except Exception:
+            pass
     default_sqlite_url = f"sqlite:///{temp_db_path}"  # Tạo URL kết nối SQLite cho môi trường tạm
 else:
     BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))

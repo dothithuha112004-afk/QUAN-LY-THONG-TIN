@@ -8,12 +8,16 @@ def seed_database():
     Base.metadata.create_all(bind=engine)
     db = SessionLocal()
 
-    if db.query(User).filter(User.username == "admin").first():
+    existing_students_count = db.query(User).filter(User.role == "student").count()
+    admin_exists = db.query(User).filter(User.username == "admin").first()
+
+    if admin_exists and existing_students_count >= 20:
         print(" Database already initialized with seed data.")
         db.close()
         return
 
-    print(" Seeding initial demo data into database...")
+    print(" Seeding missing initial demo data into database...")
+
 
     default_pwd_hash = hash_password("password123")
 
@@ -76,26 +80,36 @@ def seed_database():
         {"username": "hocsinh17", "full_name": "Võ Văn Minh", "email": "minh.vv@sinhvien.edu.vn", "phone": "0934567012", "age": 21, "title": "Sinh viên K64", "department": "Công nghệ thông tin", "code": "SV017"},
         {"username": "hocsinh18", "full_name": "Nguyễn Phương Thảo", "email": "thao.np@sinhvien.edu.vn", "phone": "0945670123", "age": 19, "title": "Sinh viên K66", "department": "Ngoại ngữ", "code": "SV018"},
         {"username": "hocsinh19", "full_name": "Đào Nhật Hoàng", "email": "hoang.dn@sinhvien.edu.vn", "phone": "0956701234", "age": 20, "title": "Sinh viên K65", "department": "Điện - Điện tử", "code": "SV019"},
-        {"username": "hocsinh20", "full_name": "Lê Gia Bảo", "email": "bao.lg@sinhvien.edu.vn", "phone": "0967012345", "age": 20, "title": "Sinh viên K65", "department": "Công nghệ thông tin", "code": "SV020"}
+        {"username": "hocsinh20", "full_name": "Lê Gia Bảo", "email": "bao.lg@sinhvien.edu.vn", "phone": "0967012345", "age": 20, "title": "Sinh viên K65", "department": "Công nghệ thông tin", "code": "SV020"},
+        {"username": "thuha112004", "full_name": "Đỗ Thị Thu Hà", "email": "dothithuha112004@gmail.com", "phone": "0988888888", "age": 20, "title": "Sinh viên K65", "department": "Công nghệ thông tin", "code": "SV11"}
     ]
 
-    student_objects = [
-        User(
-            username=s["username"],
-            password_hash=default_pwd_hash,
-            role="student",
-            full_name=s["full_name"],
-            email=s["email"],
-            phone=s["phone"],
-            age=s["age"],
-            title=s["title"],
-            department=s["department"],
-            code=s["code"]
-        ) for s in students_raw
-    ]
+    new_users = []
+    if not admin_exists:
+        new_users.extend([admin_user, teacher1, teacher2])
 
-    db.add_all([admin_user, teacher1, teacher2] + student_objects)
-    db.commit()
+    existing_usernames = {u[0] for u in db.query(User.username).all()}
+    for s in students_raw:
+        if s["username"] not in existing_usernames:
+            new_users.append(
+                User(
+                    username=s["username"],
+                    password_hash=default_pwd_hash,
+                    role="student",
+                    full_name=s["full_name"],
+                    email=s["email"],
+                    phone=s["phone"],
+                    age=s["age"],
+                    title=s["title"],
+                    department=s["department"],
+                    code=s["code"]
+                )
+            )
+
+    if new_users:
+        db.add_all(new_users)
+        db.commit()
+
 
     course1 = Course(
         course_code="INT1001",
@@ -124,8 +138,10 @@ def seed_database():
         term="Học kỳ 1 - 2026"
     )
 
-    db.add_all([course1, course2, course3])
-    db.commit()
+    existing_courses = db.query(Course).count()
+    if existing_courses == 0:
+        db.add_all([course1, course2, course3])
+        db.commit()
 
     sched1 = Schedule(
         course_id=course1.id,
@@ -163,61 +179,71 @@ def seed_database():
         term="Học kỳ 1 - 2026"
     )
 
-    db.add_all([sched1, sched2, sched3])
-    db.commit()
+    existing_schedules = db.query(Schedule).count()
+    if existing_schedules == 0:
+        db.add_all([sched1, sched2, sched3])
+        db.commit()
 
-    # Create Enrollments for students
-    enrollments = []
-    for idx, st in enumerate(student_objects):
-        target_course = course1 if idx % 3 == 0 else (course2 if idx % 3 == 1 else course3)
-        enrollments.append(Enrollment(student_id=st.id, course_id=target_course.id, term="Học kỳ 1 - 2026"))
+    # Fetch all student objects for enrollment & attendance
+    student_objects = db.query(User).filter(User.role == "student").all()
 
-    db.add_all(enrollments)
-    db.commit()
+    existing_enrollments = db.query(Enrollment).count()
+    if existing_enrollments == 0 and student_objects:
+        enrollments = []
+        for idx, st in enumerate(student_objects):
+            target_course = course1 if idx % 3 == 0 else (course2 if idx % 3 == 1 else course3)
+            enrollments.append(Enrollment(student_id=st.id, course_id=target_course.id, term="Học kỳ 1 - 2026"))
 
-    att1 = Attendance(
-        schedule_id=sched1.id,
-        student_id=student_objects[0].id,
-        attendance_date=date(2026, 9, 21),
-        status="Có mặt",
-        note="Đi đúng giờ"
-    )
-    att2 = Attendance(
-        schedule_id=sched1.id,
-        student_id=student_objects[2].id,
-        attendance_date=date(2026, 9, 21),
-        status="Đi muộn",
-        note="Trễ 15 phút"
-    )
+        db.add_all(enrollments)
+        db.commit()
 
-    db.add_all([att1, att2])
-    db.commit()
+    existing_attendance = db.query(Attendance).count()
+    if existing_attendance == 0 and len(student_objects) >= 3:
+        att1 = Attendance(
+            schedule_id=sched1.id,
+            student_id=student_objects[0].id,
+            attendance_date=date(2026, 9, 21),
+            status="Có mặt",
+            note="Đi đúng giờ"
+        )
+        att2 = Attendance(
+            schedule_id=sched1.id,
+            student_id=student_objects[2].id,
+            attendance_date=date(2026, 9, 21),
+            status="Đi muộn",
+            note="Trễ 15 phút"
+        )
+        db.add_all([att1, att2])
+        db.commit()
 
-    g1 = Grade(
-        student_id=student_objects[0].id,
-        course_id=course1.id,
-        midterm_score=8.5,
-        final_score=9.0,
-        total_score=8.85,
-        note="Học tập xuất sắc",
-        graded_by_teacher_id=teacher1.id
-    )
+    existing_grades = db.query(Grade).count()
+    if existing_grades == 0 and len(student_objects) >= 2:
+        g1 = Grade(
+            student_id=student_objects[0].id,
+            course_id=course1.id,
+            midterm_score=8.5,
+            final_score=9.0,
+            total_score=8.85,
+            note="Học tập xuất sắc",
+            graded_by_teacher_id=teacher1.id
+        )
 
-    g2 = Grade(
-        student_id=student_objects[1].id,
-        course_id=course3.id,
-        midterm_score=9.0,
-        final_score=9.5,
-        total_score=9.35,
-        note="Thực hành thí nghiệm xuất sắc",
-        graded_by_teacher_id=teacher2.id
-    )
+        g2 = Grade(
+            student_id=student_objects[1].id,
+            course_id=course3.id,
+            midterm_score=9.0,
+            final_score=9.5,
+            total_score=9.35,
+            note="Thực hành thí nghiệm xuất sắc",
+            graded_by_teacher_id=teacher2.id
+        )
 
-    db.add_all([g1, g2])
-    db.commit()
+        db.add_all([g1, g2])
+        db.commit()
 
     db.close()
-    print(" Demo data with 20 students seeded successfully!")
+    print(" Demo data with 21 students seeded successfully!")
 
 if __name__ == "__main__":
     seed_database()
+
