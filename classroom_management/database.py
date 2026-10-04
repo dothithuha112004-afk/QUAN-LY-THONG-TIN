@@ -5,15 +5,8 @@ from sqlalchemy.engine import Engine  # Import Engine type cho SQLAlchemy event
 from sqlalchemy.orm import declarative_base, sessionmaker  # Lớp cơ sở ánh xạ ORM và lớp tạo phiên làm việc Session
 
 # Database Configuration (Cấu hình cơ sở dữ liệu)
-# Hỗ trợ kết nối Microsoft SQL Server (mssql+pyodbc) và cơ chế tự động chuyển sang SQLite (Fallback)
-DB_TYPE = os.getenv("DB_TYPE", "sqlite")  # Đọc loại CSDL từ biến môi trường DB_TYPE, mặc định là "sqlite"
-SQLSERVER_CONN_STR = os.getenv(  # Đọc chuỗi kết nối SQL Server từ biến môi trường
-    "DATABASE_URL",
-    os.getenv(
-        "SQLSERVER_CONN_STR",
-        "mssql+pyodbc://sa:YourPassword123@localhost:1433/ClassroomDB?driver=ODBC+Driver+17+for+SQL+Server"  # Chuỗi kết nối mặc định tới SQL Server local
-    )
-)
+DB_TYPE = os.getenv("DB_TYPE", "sqlite")  # Đọc loại CSDL từ biến môi trường DB_TYPE
+DATABASE_URL = os.getenv("DATABASE_URL")  # Đọc chuỗi kết nối CSDL Cloud (Supabase, Neon, Postgres, SQL Server)
 
 # Xử lý môi trường Vercel/Serverless: Thư mục hiện tại chỉ đọc (read-only), phải lưu file sqlite vào thư mục tạm /tmp
 if os.getenv("VERCEL") or os.getenv("AWS_LAMBDA_FUNCTION_NAME"):  # Kiểm tra xem app có đang chạy trên đám mây Vercel/Lambda không
@@ -39,26 +32,46 @@ def set_sqlite_pragma(dbapi_connection, connection_record):
         except Exception:
             pass
 
-if DB_TYPE.lower() == "sqlserver":  # Nếu người dùng cấu hình chọn loại CSDL là SQL Server
+# Khởi tạo Engine kết nối: Ưu tiên DATABASE_URL (Cloud DB như Supabase/Neon/SQLServer), nếu không có thì dùng SQLite
+if DATABASE_URL:
+    # Chuẩn hóa tiền tố postgres:// thành postgresql:// cho chuẩn SQLAlchemy 2.x
+    if DATABASE_URL.startswith("postgres://"):
+        DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
+    
     try:
-        engine = create_engine(  # Khởi tạo engine kết nối SQL Server
-            SQLSERVER_CONN_STR,  # Truyền chuỗi kết nối SQL Server
-            fast_executemany=True,  # Tăng tốc độ ghi dữ liệu nhiều dòng đồng thời cho SQL Server
-            pool_pre_ping=True,  # Tự động kiểm tra kết nối còn sống hay không trước khi gửi truy vấn
-            pool_recycle=3600  # Tự động làm mới kết nối sau mỗi 1 giờ (3600 giây)
+        engine = create_engine(
+            DATABASE_URL,
+            pool_pre_ping=True,
+            pool_recycle=3600
         )
-        with engine.connect() as conn:  # Thử thực hiện kết nối thực tế tới SQL Server
-            pass  # Nếu kết nối thành công thì bỏ qua
-        print(" Connected to Microsoft SQL Server successfully!")  # In thông báo kết nối SQL Server thành công
-    except Exception as e:  # Nếu gặp lỗi không kết lỗi được SQL Server
-        print(f" Warning: Could not connect to SQL Server ({e}). Falling back to SQLite database...")  # In cảnh báo lỗi
-        engine = create_engine(SQLITE_URL, connect_args={"check_same_thread": False})  # Tự động chuyển (fallback) sang dùng SQLite
-else:  # Nếu cấu hình mặc định dùng SQLite
-    engine = create_engine(SQLITE_URL, connect_args={"check_same_thread": False})  # Khởi tạo engine kết nối SQLite (cho phép đa luồng)
+        with engine.connect() as conn:
+            pass
+        print(" Connected to Remote Database (DATABASE_URL) successfully!")
+    except Exception as e:
+        print(f" Warning: Could not connect to DATABASE_URL ({e}). Falling back to SQLite database...")
+        engine = create_engine(SQLITE_URL, connect_args={"check_same_thread": False})
+elif DB_TYPE.lower() in ["sqlserver", "mssql"]:
+    sqlserver_conn_str = os.getenv("SQLSERVER_CONN_STR", "mssql+pyodbc://sa:YourPassword123@localhost:1433/ClassroomDB?driver=ODBC+Driver+17+for+SQL+Server")
     try:
-        print(f" Using SQLite database engine at: {SQLITE_URL}")  # In thông báo đang sử dụng SQLite
+        engine = create_engine(
+            sqlserver_conn_str,
+            fast_executemany=True,
+            pool_pre_ping=True,
+            pool_recycle=3600
+        )
+        with engine.connect() as conn:
+            pass
+        print(" Connected to Microsoft SQL Server successfully!")
+    except Exception as e:
+        print(f" Warning: Could not connect to SQL Server ({e}). Falling back to SQLite database...")
+        engine = create_engine(SQLITE_URL, connect_args={"check_same_thread": False})
+else:  # Mặc định dùng SQLite local/temp
+    engine = create_engine(SQLITE_URL, connect_args={"check_same_thread": False})
+    try:
+        print(f" Using SQLite database engine at: {SQLITE_URL}")
     except Exception:
         print(" Using SQLite database engine.")
+
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)  # Khởi tạo class tạo phiên làm việc Session kết nối với engine
 Base = declarative_base()  # Tạo lớp cơ sở Base để các Model dữ liệu ORM kế thừa
