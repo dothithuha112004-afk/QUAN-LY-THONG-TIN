@@ -57,27 +57,27 @@ def seed_database():
             db.commit()
 
         students_raw = [
-            {"username": "hocsinh1", "full_name": "Bùi Hoàng Phương Anh", "email": "anh.bhp@sinhvien.edu.vn", "phone": "0934567890", "age": 22, "title": "Kết cấu xây dựng K63", "department": "Công nghệ thông tin", "code": "222503004"},
-            {"username": "hocsinh2", "full_name": "Trần Bảo Anh", "email": "anh.tb@sinhvien.edu.vn", "phone": "0945678901", "age": 22, "title": "Kết cấu xây dựng K63", "department": "Khoa Hóa & Sinh", "code": "222503022"},
-            {"username": "hocsinh3", "full_name": "Vũ Tiến Duy", "email": "duy.vt@sinhvien.edu.vn", "phone": "0956789012", "age": 22, "title": "Kết cấu xây dựng K63", "department": "Công nghệ thông tin", "code": "222533064"},
-            {"username": "hocsinh4", "full_name": "Nguyễn Nhật Ánh Dương", "email": "duong.nna@sinhvien.edu.vn", "phone": "0961234567", "age": 22, "title": "Kết cấu xây dựng K63", "department": "Công nghệ thông tin", "code": "222533068"},
-            {"username": "hocsinh5", "full_name": "Ngô Văn Đạt", "email": "dat.nv@sinhvien.edu.vn", "phone": "0972345678", "age": 22, "title": "Kết cấu xây dựng K63", "department": "Kinh tế & Quản trị", "code": "222533077"},
-            {"username": "hocsinh6", "full_name": "Đỗ Hải Đăng", "email": "dang.dh@sinhvien.edu.vn", "phone": "0983456789", "age": 22, "title": "Kết cấu xây dựng K63", "department": "Điện - Điện tử", "code": "222533085"},
-            {"username": "hocsinh7", "full_name": "Nguyễn Đức Độ", "email": "do.nd@sinhvien.edu.vn", "phone": "0914567890", "age": 22, "title": "Kết cấu xây dựng K63", "department": "Công nghệ thông tin", "code": "222533090"},
-            {"username": "hocsinh8", "full_name": "Đoàn Anh Đức", "email": "duc.da@sinhvien.edu.vn", "phone": "0925678901", "age": 22, "title": "Kết cấu xây dựng K63", "department": "Ngoại ngữ", "code": "222533094"},
-            {"username": "hocsinh9", "full_name": "Đào Duy Đường", "email": "duong.dd@sinhvien.edu.vn", "phone": "0936789012", "age": 22, "title": "Kết cấu xây dựng K63", "department": "Công nghệ thông tin", "code": "222533099"},
-            {"username": "hocsinh10", "full_name": "Đỗ Thị Thu Hà", "email": "ha.dtt@sinhvien.edu.vn", "phone": "0947890123", "age": 22, "title": "Kết cấu xây dựng K63", "department": "Khoa Hóa & Sinh", "code": "222533106"},
-            {"username": "hocsinh11", "full_name": "Trần Trung Hiếu", "email": "hieu.tt@sinhvien.edu.vn", "phone": "0958901234", "age": 22, "title": "Kết cấu xây dựng K63", "department": "Kinh tế & Quản trị", "code": "222533123"},
-            {"username": "hocsinh12", "full_name": "Nguyễn Quang Hưng", "email": "hung.nq@sinhvien.edu.vn", "phone": "0969012345", "age": 22, "title": "Kết cấu xây dựng K63", "department": "Ngoại ngữ", "code": "212511851"},
-            {"username": "hocsinh13", "full_name": "Nguyễn Đăng Hướng", "email": "huong.nd@sinhvien.edu.vn", "phone": "0970123456", "age": 22, "title": "Kết cấu xây dựng K63", "department": "Điện - Điện tử", "code": "222533153"},
-            {"username": "hocsinh14", "full_name": "Nguyễn Phương Linh", "email": "linh.np@sinhvien.edu.vn", "phone": "0981234567", "age": 22, "title": "Kết cấu xây dựng K63", "department": "Khoa Hóa & Sinh", "code": "222533177"},
-            {"username": "hocsinh15", "full_name": "Đỗ Hải Long", "email": "long.dh@sinhvien.edu.vn", "phone": "0912345670", "age": 22, "title": "Kết cấu xây dựng K63", "department": "Công nghệ thông tin", "code": "222503181"},
-            {"username": "hocsinh16", "full_name": "Đào Duy Mạnh", "email": "manh.dd@sinhvien.edu.vn", "phone": "0923456701", "age": 22, "title": "Kết cấu xây dựng K63", "department": "Kinh tế & Quản trị", "code": "222533189"},
-            {"username": "hocsinh17", "full_name": "Kiều Tuấn Nam", "email": "nam.kt@sinhvien.edu.vn", "phone": "0934567012", "age": 22, "title": "Kết cấu xây dựng K63", "department": "Công nghệ thông tin", "code": "222503204"},
-            {"username": "hocsinh18", "full_name": "Nguyễn Thị Hồng Ngọc", "email": "ngoc.nth@sinhvien.edu.vn", "phone": "0945670123", "age": 22, "title": "Kết cấu xây dựng K63", "department": "Ngoại ngữ", "code": "222533219"},
-            {"username": "hocsinh19", "full_name": "Đỗ Anh Phương", "email": "phuong.da@sinhvien.edu.vn", "phone": "0956701234", "age": 22, "title": "Kết cấu xây dựng K63", "department": "Điện - Điện tử", "code": "222503229"},
-            {"username": "hocsinh20", "full_name": "Ngô Hải Quân", "email": "quan.nh@sinhvien.edu.vn", "phone": "0967012345", "age": 22, "title": "Kết cấu xây dựng K63", "department": "Công nghệ thông tin", "code": "222503241"},
-            {"username": "thuha112004", "full_name": "Nguyễn Minh Quân", "email": "quan.nm@sinhvien.edu.vn", "phone": "0988888888", "age": 22, "title": "Kết cấu xây dựng K63", "department": "Công nghệ thông tin", "code": "222533242"}
+            {"username": "hocsinh1", "full_name": "Bùi Hoàng Phương Anh", "email": "anh.bhp@sinhvien.edu.vn", "phone": "0934567890", "age": 22, "title": "Kết cấu xây dựng K63", "department": "Kỹ thuật xây dựng", "code": "222503004"},
+            {"username": "hocsinh2", "full_name": "Trần Bảo Anh", "email": "anh.tb@sinhvien.edu.vn", "phone": "0945678901", "age": 22, "title": "Kết cấu xây dựng K63", "department": "Kỹ thuật xây dựng", "code": "222503022"},
+            {"username": "hocsinh3", "full_name": "Vũ Tiến Duy", "email": "duy.vt@sinhvien.edu.vn", "phone": "0956789012", "age": 22, "title": "Kết cấu xây dựng K63", "department": "Kỹ thuật xây dựng", "code": "222533064"},
+            {"username": "hocsinh4", "full_name": "Nguyễn Nhật Ánh Dương", "email": "duong.nna@sinhvien.edu.vn", "phone": "0961234567", "age": 22, "title": "Kết cấu xây dựng K63", "department": "Kỹ thuật xây dựng", "code": "222533068"},
+            {"username": "hocsinh5", "full_name": "Ngô Văn Đạt", "email": "dat.nv@sinhvien.edu.vn", "phone": "0972345678", "age": 22, "title": "Kết cấu xây dựng K63", "department": "Kỹ thuật xây dựng", "code": "222533077"},
+            {"username": "hocsinh6", "full_name": "Đỗ Hải Đăng", "email": "dang.dh@sinhvien.edu.vn", "phone": "0983456789", "age": 22, "title": "Kết cấu xây dựng K63", "department": "Kỹ thuật xây dựng", "code": "222533085"},
+            {"username": "hocsinh7", "full_name": "Nguyễn Đức Độ", "email": "do.nd@sinhvien.edu.vn", "phone": "0914567890", "age": 22, "title": "Kết cấu xây dựng K63", "department": "Kỹ thuật xây dựng", "code": "222533090"},
+            {"username": "hocsinh8", "full_name": "Đoàn Anh Đức", "email": "duc.da@sinhvien.edu.vn", "phone": "0925678901", "age": 22, "title": "Kết cấu xây dựng K63", "department": "Kỹ thuật xây dựng", "code": "222533094"},
+            {"username": "hocsinh9", "full_name": "Đào Duy Đường", "email": "duong.dd@sinhvien.edu.vn", "phone": "0936789012", "age": 22, "title": "Kết cấu xây dựng K63", "department": "Kỹ thuật xây dựng", "code": "222533099"},
+            {"username": "hocsinh10", "full_name": "Đỗ Thị Thu Hà", "email": "ha.dtt@sinhvien.edu.vn", "phone": "0947890123", "age": 22, "title": "Kết cấu xây dựng K63", "department": "Kỹ thuật xây dựng", "code": "222533106"},
+            {"username": "hocsinh11", "full_name": "Trần Trung Hiếu", "email": "hieu.tt@sinhvien.edu.vn", "phone": "0958901234", "age": 22, "title": "Kết cấu xây dựng K63", "department": "Kỹ thuật xây dựng", "code": "222533123"},
+            {"username": "hocsinh12", "full_name": "Nguyễn Quang Hưng", "email": "hung.nq@sinhvien.edu.vn", "phone": "0969012345", "age": 22, "title": "Kết cấu xây dựng K63", "department": "Kỹ thuật xây dựng", "code": "212511851"},
+            {"username": "hocsinh13", "full_name": "Nguyễn Đăng Hướng", "email": "huong.nd@sinhvien.edu.vn", "phone": "0970123456", "age": 22, "title": "Kết cấu xây dựng K63", "department": "Kỹ thuật xây dựng", "code": "222533153"},
+            {"username": "hocsinh14", "full_name": "Nguyễn Phương Linh", "email": "linh.np@sinhvien.edu.vn", "phone": "0981234567", "age": 22, "title": "Kết cấu xây dựng K63", "department": "Kỹ thuật xây dựng", "code": "222533177"},
+            {"username": "hocsinh15", "full_name": "Đỗ Hải Long", "email": "long.dh@sinhvien.edu.vn", "phone": "0912345670", "age": 22, "title": "Kết cấu xây dựng K63", "department": "Kỹ thuật xây dựng", "code": "222503181"},
+            {"username": "hocsinh16", "full_name": "Đào Duy Mạnh", "email": "manh.dd@sinhvien.edu.vn", "phone": "0923456701", "age": 22, "title": "Kết cấu xây dựng K63", "department": "Kỹ thuật xây dựng", "code": "222533189"},
+            {"username": "hocsinh17", "full_name": "Kiều Tuấn Nam", "email": "nam.kt@sinhvien.edu.vn", "phone": "0934567012", "age": 22, "title": "Kết cấu xây dựng K63", "department": "Kỹ thuật xây dựng", "code": "222503204"},
+            {"username": "hocsinh18", "full_name": "Nguyễn Thị Hồng Ngọc", "email": "ngoc.nth@sinhvien.edu.vn", "phone": "0945670123", "age": 22, "title": "Kết cấu xây dựng K63", "department": "Kỹ thuật xây dựng", "code": "222533219"},
+            {"username": "hocsinh19", "full_name": "Đỗ Anh Phương", "email": "phuong.da@sinhvien.edu.vn", "phone": "0956701234", "age": 22, "title": "Kết cấu xây dựng K63", "department": "Kỹ thuật xây dựng", "code": "222503229"},
+            {"username": "hocsinh20", "full_name": "Ngô Hải Quân", "email": "quan.nh@sinhvien.edu.vn", "phone": "0967012345", "age": 22, "title": "Kết cấu xây dựng K63", "department": "Kỹ thuật xây dựng", "code": "222503241"},
+            {"username": "thuha112004", "full_name": "Nguyễn Minh Quân", "email": "quan.nm@sinhvien.edu.vn", "phone": "0988888888", "age": 22, "title": "Kết cấu xây dựng K63", "department": "Kỹ thuật xây dựng", "code": "222533242"}
         ]
 
         for s in students_raw:
@@ -87,6 +87,7 @@ def seed_database():
                 user.code = s["code"]
                 user.title = s["title"]
                 user.age = s["age"]
+                user.department = s["department"]
             else:
                 db.add(
                     User(
