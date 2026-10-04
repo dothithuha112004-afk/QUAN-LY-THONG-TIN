@@ -12,10 +12,6 @@ def seed_database():
         existing_students_count = db.query(User).filter(User.role == "student").count()
         admin_exists = db.query(User).filter(User.username == "admin").first()
 
-        if admin_exists and existing_students_count >= 21:
-            print(" Database already initialized with 21 or more students.")
-            return
-
         print(" Seeding missing initial demo data into database...")
 
         default_pwd_hash = hash_password("password123")
@@ -61,34 +57,38 @@ def seed_database():
             db.commit()
 
         students_raw = [
-            {"username": "hocsinh1", "full_name": "Lê Hoàng Nam", "email": "nam.lh@sinhvien.edu.vn", "phone": "0934567890", "age": 20, "title": "Sinh viên K65", "department": "Công nghệ thông tin", "code": "SV001"},
-            {"username": "hocsinh2", "full_name": "Phạm Mai Anh", "email": "anh.pm@sinhvien.edu.vn", "phone": "0945678901", "age": 19, "title": "Sinh viên K66", "department": "Khoa Hóa & Sinh", "code": "SV002"},
-            {"username": "hocsinh3", "full_name": "Đỗ Minh Trí", "email": "tri.dm@sinhvien.edu.vn", "phone": "0956789012", "age": 21, "title": "Sinh viên K64", "department": "Công nghệ thông tin", "code": "SV003"},
-            {"username": "hocsinh4", "full_name": "Nguyễn Thị Thu Hà", "email": "ha.ntt@sinhvien.edu.vn", "phone": "0961234567", "age": 20, "title": "Sinh viên K65", "department": "Công nghệ thông tin", "code": "SV004"},
-            {"username": "hocsinh5", "full_name": "Trần Văn Khánh", "email": "khanh.tv@sinhvien.edu.vn", "phone": "0972345678", "age": 19, "title": "Sinh viên K66", "department": "Kinh tế & Quản trị", "code": "SV005"},
-            {"username": "hocsinh6", "full_name": "Vũ Hoàng Bảo", "email": "bao.vh@sinhvien.edu.vn", "phone": "0983456789", "age": 20, "title": "Sinh viên K65", "department": "Điện - Điện tử", "code": "SV006"},
-            {"username": "hocsinh7", "full_name": "Bùi Thiện Nhân", "email": "nhan.bt@sinhvien.edu.vn", "phone": "0914567890", "age": 22, "title": "Sinh viên K63", "department": "Công nghệ thông tin", "code": "SV007"},
-            {"username": "hocsinh8", "full_name": "Đặng Ngọc Linh", "email": "linh.dn@sinhvien.edu.vn", "phone": "0925678901", "age": 19, "title": "Sinh viên K66", "department": "Ngoại ngữ", "code": "SV008"},
-            {"username": "hocsinh9", "full_name": "Hoàng Quang Huy", "email": "huy.hq@sinhvien.edu.vn", "phone": "0936789012", "age": 21, "title": "Sinh viên K64", "department": "Công nghệ thông tin", "code": "SV009"},
-            {"username": "hocsinh10", "full_name": "Phan Thị Thanh Thảo", "email": "thao.ptt@sinhvien.edu.vn", "phone": "0947890123", "age": 20, "title": "Sinh viên K65", "department": "Khoa Hóa & Sinh", "code": "SV010"},
-            {"username": "hocsinh11", "full_name": "Ngô Tuấn Anh", "email": "anh.nt@sinhvien.edu.vn", "phone": "0958901234", "age": 19, "title": "Sinh viên K66", "department": "Kinh tế & Quản trị", "code": "SV011"},
-            {"username": "hocsinh12", "full_name": "Dương Thùy Trang", "email": "trang.dt@sinhvien.edu.vn", "phone": "0969012345", "age": 20, "title": "Sinh viên K65", "department": "Ngoại ngữ", "code": "SV012"},
-            {"username": "hocsinh13", "full_name": "Nguyễn Đức Thắng", "email": "thang.nd@sinhvien.edu.vn", "phone": "0970123456", "age": 21, "title": "Sinh viên K64", "department": "Điện - Điện tử", "code": "SV013"},
-            {"username": "hocsinh14", "full_name": "Lý Mỹ Duyên", "email": "duyen.lm@sinhvien.edu.vn", "phone": "0981234567", "age": 19, "title": "Sinh viên K66", "department": "Khoa Hóa & Sinh", "code": "SV014"},
-            {"username": "hocsinh15", "full_name": "Hồ Thanh Tùng", "email": "tung.ht@sinhvien.edu.vn", "phone": "0912345670", "age": 22, "title": "Sinh viên K63", "department": "Công nghệ thông tin", "code": "SV015"},
-            {"username": "hocsinh16", "full_name": "Trịnh Ngọc Ánh", "email": "anh.tn@sinhvien.edu.vn", "phone": "0923456701", "age": 20, "title": "Sinh viên K65", "department": "Kinh tế & Quản trị", "code": "SV016"},
-            {"username": "hocsinh17", "full_name": "Võ Văn Minh", "email": "minh.vv@sinhvien.edu.vn", "phone": "0934567012", "age": 21, "title": "Sinh viên K64", "department": "Công nghệ thông tin", "code": "SV017"},
-            {"username": "hocsinh18", "full_name": "Nguyễn Phương Thảo", "email": "thao.np@sinhvien.edu.vn", "phone": "0945670123", "age": 19, "title": "Sinh viên K66", "department": "Ngoại ngữ", "code": "SV018"},
-            {"username": "hocsinh19", "full_name": "Đào Nhật Hoàng", "email": "hoang.dn@sinhvien.edu.vn", "phone": "0956701234", "age": 20, "title": "Sinh viên K65", "department": "Điện - Điện tử", "code": "SV019"},
-            {"username": "hocsinh20", "full_name": "Lê Gia Bảo", "email": "bao.lg@sinhvien.edu.vn", "phone": "0967012345", "age": 20, "title": "Sinh viên K65", "department": "Công nghệ thông tin", "code": "SV020"},
-            {"username": "thuha112004", "full_name": "Đỗ Thị Thu Hà", "email": "dothithuha112004@gmail.com", "phone": "0988888888", "age": 20, "title": "Sinh viên K65", "department": "Công nghệ thông tin", "code": "SV11"}
+            {"username": "hocsinh1", "full_name": "Bùi Hoàng Phương Anh", "email": "anh.bhp@sinhvien.edu.vn", "phone": "0934567890", "age": 22, "title": "Kết cấu xây dựng K63", "department": "Công nghệ thông tin", "code": "222503004"},
+            {"username": "hocsinh2", "full_name": "Trần Bảo Anh", "email": "anh.tb@sinhvien.edu.vn", "phone": "0945678901", "age": 22, "title": "Kết cấu xây dựng K63", "department": "Khoa Hóa & Sinh", "code": "222503022"},
+            {"username": "hocsinh3", "full_name": "Vũ Tiến Duy", "email": "duy.vt@sinhvien.edu.vn", "phone": "0956789012", "age": 22, "title": "Kết cấu xây dựng K63", "department": "Công nghệ thông tin", "code": "222533064"},
+            {"username": "hocsinh4", "full_name": "Nguyễn Nhật Ánh Dương", "email": "duong.nna@sinhvien.edu.vn", "phone": "0961234567", "age": 22, "title": "Kết cấu xây dựng K63", "department": "Công nghệ thông tin", "code": "222533068"},
+            {"username": "hocsinh5", "full_name": "Ngô Văn Đạt", "email": "dat.nv@sinhvien.edu.vn", "phone": "0972345678", "age": 22, "title": "Kết cấu xây dựng K63", "department": "Kinh tế & Quản trị", "code": "222533077"},
+            {"username": "hocsinh6", "full_name": "Đỗ Hải Đăng", "email": "dang.dh@sinhvien.edu.vn", "phone": "0983456789", "age": 22, "title": "Kết cấu xây dựng K63", "department": "Điện - Điện tử", "code": "222533085"},
+            {"username": "hocsinh7", "full_name": "Nguyễn Đức Độ", "email": "do.nd@sinhvien.edu.vn", "phone": "0914567890", "age": 22, "title": "Kết cấu xây dựng K63", "department": "Công nghệ thông tin", "code": "222533090"},
+            {"username": "hocsinh8", "full_name": "Đoàn Anh Đức", "email": "duc.da@sinhvien.edu.vn", "phone": "0925678901", "age": 22, "title": "Kết cấu xây dựng K63", "department": "Ngoại ngữ", "code": "222533094"},
+            {"username": "hocsinh9", "full_name": "Đào Duy Đường", "email": "duong.dd@sinhvien.edu.vn", "phone": "0936789012", "age": 22, "title": "Kết cấu xây dựng K63", "department": "Công nghệ thông tin", "code": "222533099"},
+            {"username": "hocsinh10", "full_name": "Đỗ Thị Thu Hà", "email": "ha.dtt@sinhvien.edu.vn", "phone": "0947890123", "age": 22, "title": "Kết cấu xây dựng K63", "department": "Khoa Hóa & Sinh", "code": "222533106"},
+            {"username": "hocsinh11", "full_name": "Trần Trung Hiếu", "email": "hieu.tt@sinhvien.edu.vn", "phone": "0958901234", "age": 22, "title": "Kết cấu xây dựng K63", "department": "Kinh tế & Quản trị", "code": "222533123"},
+            {"username": "hocsinh12", "full_name": "Nguyễn Quang Hưng", "email": "hung.nq@sinhvien.edu.vn", "phone": "0969012345", "age": 22, "title": "Kết cấu xây dựng K63", "department": "Ngoại ngữ", "code": "212511851"},
+            {"username": "hocsinh13", "full_name": "Nguyễn Đăng Hướng", "email": "huong.nd@sinhvien.edu.vn", "phone": "0970123456", "age": 22, "title": "Kết cấu xây dựng K63", "department": "Điện - Điện tử", "code": "222533153"},
+            {"username": "hocsinh14", "full_name": "Nguyễn Phương Linh", "email": "linh.np@sinhvien.edu.vn", "phone": "0981234567", "age": 22, "title": "Kết cấu xây dựng K63", "department": "Khoa Hóa & Sinh", "code": "222533177"},
+            {"username": "hocsinh15", "full_name": "Đỗ Hải Long", "email": "long.dh@sinhvien.edu.vn", "phone": "0912345670", "age": 22, "title": "Kết cấu xây dựng K63", "department": "Công nghệ thông tin", "code": "222503181"},
+            {"username": "hocsinh16", "full_name": "Đào Duy Mạnh", "email": "manh.dd@sinhvien.edu.vn", "phone": "0923456701", "age": 22, "title": "Kết cấu xây dựng K63", "department": "Kinh tế & Quản trị", "code": "222533189"},
+            {"username": "hocsinh17", "full_name": "Kiều Tuấn Nam", "email": "nam.kt@sinhvien.edu.vn", "phone": "0934567012", "age": 22, "title": "Kết cấu xây dựng K63", "department": "Công nghệ thông tin", "code": "222503204"},
+            {"username": "hocsinh18", "full_name": "Nguyễn Thị Hồng Ngọc", "email": "ngoc.nth@sinhvien.edu.vn", "phone": "0945670123", "age": 22, "title": "Kết cấu xây dựng K63", "department": "Ngoại ngữ", "code": "222533219"},
+            {"username": "hocsinh19", "full_name": "Đỗ Anh Phương", "email": "phuong.da@sinhvien.edu.vn", "phone": "0956701234", "age": 22, "title": "Kết cấu xây dựng K63", "department": "Điện - Điện tử", "code": "222503229"},
+            {"username": "hocsinh20", "full_name": "Ngô Hải Quân", "email": "quan.nh@sinhvien.edu.vn", "phone": "0967012345", "age": 22, "title": "Kết cấu xây dựng K63", "department": "Công nghệ thông tin", "code": "222503241"},
+            {"username": "thuha112004", "full_name": "Nguyễn Minh Quân", "email": "quan.nm@sinhvien.edu.vn", "phone": "0988888888", "age": 22, "title": "Kết cấu xây dựng K63", "department": "Công nghệ thông tin", "code": "222533242"}
         ]
 
-        existing_usernames = {u[0] for u in db.query(User.username).all()}
-        new_users = []
         for s in students_raw:
-            if s["username"] not in existing_usernames:
-                new_users.append(
+            user = db.query(User).filter(User.username == s["username"]).first()
+            if user:
+                user.full_name = s["full_name"]
+                user.code = s["code"]
+                user.title = s["title"]
+                user.age = s["age"]
+            else:
+                db.add(
                     User(
                         username=s["username"],
                         password_hash=default_pwd_hash,
@@ -102,10 +102,7 @@ def seed_database():
                         code=s["code"]
                     )
                 )
-
-        if new_users:
-            db.add_all(new_users)
-            db.commit()
+        db.commit()
 
         # Seed courses safely
         c1 = db.query(Course).filter(Course.course_code == "INT1001").first()
@@ -203,7 +200,7 @@ def seed_database():
             db.add_all(enrollments)
             db.commit()
 
-        print(" Demo data with 21 students seeded successfully!")
+        print(" Demo data with 21 real students updated successfully!")
     except Exception as e:
         print(f"Seed error: {e}")
         db.rollback()
